@@ -1,13 +1,23 @@
 import { signInWithPopup } from "firebase/auth"
 import { auth, googleAuthProvider } from "../../firebase"
 import { useNavigate } from "react-router-dom"
+import { useEffect } from "react";
 const LoginComponent = () => {
   const navigate = useNavigate();
+  useEffect(()=>{
+    const userData = localStorage.getItem('userLogin');
+    const data = JSON.parse(userData);
+    if(data)navigate('/blog')
+  },[])
   const signIn = async ()=>{
    try{
       const res = await signInWithPopup(auth , googleAuthProvider);
       console.log(res);
-      
+      const user = {
+        name:res.user.displayName,
+        email:res.user.email,
+      }
+      localStorage.setItem("userLogin",JSON.stringify(user))
       navigate("/blog")
    }
    catch(err){
